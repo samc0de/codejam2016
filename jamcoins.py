@@ -12,8 +12,7 @@ import sys
 # Divisibility checks. [DONE]
 # No point in caching the value: divisor, 0 cache hits in 1 16 50.
 
-_CACHE = {'found': 0, 'not found': 0}
-PRIMES = [2, 3, 5, 7, 11]
+PRIMES = [2, 3, 5, 7, 11, 13, 17, 19]
 
 
 def cache_primes(length):
@@ -83,6 +82,7 @@ def find_jamcoins(length, count):
       jamcoins[num_str] = divisors
       print num_str + ' ' + ' '.join(jamcoins[num_str])
       generated += 1
+  print 'Generaged {0}'.format(generated)
   return jamcoins
 
 
@@ -91,7 +91,7 @@ def main():
   # the dict here and the open file for writing.
   # Don't use argparse, as the boilerplate slows it down.
   cases, length, count = map(int, sys.argv[1:4])
-  cache_primes(length)
+  # cache_primes(length)
   for case in range(cases):
     print "Case #{0}:".format(case + 1)
     jamcoins = find_jamcoins(length, count)
