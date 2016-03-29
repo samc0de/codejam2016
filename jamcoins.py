@@ -8,11 +8,12 @@ import math
 import sys
 
 _CACHE = {}
+_PRIME_DIVISORS = [2, 3, 5]
 
 
-def strem_generator(start, stop, step=1):
+def stream_generator(start, stop, step=1):
   """Generates a stream of strs from start to stop in binary system."""
-  for num in range(start, stop, step):
+  for num in xrange(start, stop, step):
     yield str(bin(num))[2:]
 
 
@@ -25,10 +26,28 @@ def interpret_from_base(string, base):
   return num
 
 
+def generate_prime_divisors(end):
+  for prime in _PRIME_DIVISORS:
+    if prime > end:
+      return
+    yield prime
+
+  if prime <= end:
+    for num in xrange(prime, end + 1, 2):
+      for smaller_prime in _PRIME_DIVISORS:
+        if num % smaller_prime == 0:
+          break
+      else:
+        _PRIME_DIVISORS.append(num)
+        yield num
+
+
+
 def get_a_divisor(value):
   """Gets a non-trivial divisor of value, None if no divisors are found."""
   if value not in _CACHE:
-    for divisor in range (2, int(math.ceil(math.sqrt(value)))):
+    for divisor in xrange(2, int(math.ceil(math.sqrt(value)))):
+    # for divisor in generate_prime_divisors(int(math.ceil(math.sqrt(value)))):
       if value % divisor == 0:
         _CACHE[value] = divisor
         # break  # Repeating returns to make it faster, remove if unneded.
@@ -40,7 +59,7 @@ def get_a_divisor(value):
 def find_jamcoins(length, count):
   """Generates jamcoins with given inputs in the output format needed."""
 
-  strs = strem_generator(2 ** (length - 1) + 1, 2 ** length + 1, 2)
+  strs = stream_generator(2 ** (length - 1) + 1, 2 ** length + 1, 2)
   jamcoins, generated = {}, 0
 
   for num_str in strs:
