@@ -10,9 +10,9 @@ import sys
 _CACHE = {}
 
 
-def strem_generator(start, stop, step=1):
+def stream_generator(start, stop, step=1):
   """Generates a stream of strs from start to stop in binary system."""
-  for num in range(start, stop, step):
+  for num in xrange(start, stop, step):
     yield str(bin(num))[2:]
 
 
@@ -28,7 +28,7 @@ def interpret_from_base(string, base):
 def get_a_divisor(value):
   """Gets a non-trivial divisor of value, None if no divisors are found."""
   if value not in _CACHE:
-    for divisor in range (2, int(math.ceil(math.sqrt(value)))):
+    for divisor in xrange(2, int(math.ceil(math.sqrt(value)))):
       if value % divisor == 0:
         _CACHE[value] = divisor
         # break  # Repeating returns to make it faster, remove if unneded.
@@ -40,7 +40,7 @@ def get_a_divisor(value):
 def find_jamcoins(length, count):
   """Generates jamcoins with given inputs in the output format needed."""
 
-  strs = strem_generator(2 ** (length - 1) + 1, 2 ** length + 1, 2)
+  strs = stream_generator(2 ** (length - 1) + 1, 2 ** length + 1, 2)
   jamcoins, generated = {}, 0
 
   for num_str in strs:
