@@ -7,7 +7,25 @@ for complete description.
 import math
 import sys
 
-_CACHE = {}
+# Caching primes (may need to traverse in reverse order)
+# Using offset instead of calculating value each time.
+# Divisibility checks. [DONE]
+# No point in caching the value: divisor, 0 cache hits in 1 16 50.
+
+_CACHE = {'found': 0, 'not found': 0}
+PRIMES = [2, 3, 5, 7, 11]
+
+
+def cache_primes(length):
+  upper_bound = int('1' * length)
+  for num in xrange(11, int(math.ceil(math.sqrt(upper_bound))), 2):
+    for prime in PRIMES:
+      if num % prime:
+        break
+      if prime <= math.sqrt(num):  # Remove if it's an overhead.
+        break
+    else:
+      PRIMES.append(num)
 
 
 def stream_generator(start, stop, step=1):
@@ -27,23 +45,26 @@ def interpret_from_base(string, base):
 
 def get_a_divisor(value):
   """Gets a non-trivial divisor of value, None if no divisors are found."""
-  if value not in _CACHE:
-    if value % 2 == 0:
-      _CACHE[value] = 2
-      # break  # Repeating returns to make it faster, remove if unneded.
-      return 2
-    for divisor in xrange(3, int(math.ceil(math.sqrt(value))), 2):
-      if value % divisor == 0:
-        _CACHE[value] = divisor
-        # break  # Repeating returns to make it faster, remove if unneded.
-        return divisor
-    return
-  return _CACHE[value]
+  num_str = str(value)
+  sum_of_digits = sum(map(int, num_str))
+  # Fastest first.
+  if sum_of_digits % 3 == 0:
+    return 3
+  if num_str[-1] in (0, 5):
+    return 5
+  if value % 2 == 0:
+    return 2
+  # for divisor in xrange(7, int(math.ceil(math.sqrt(value))), 2):
+  for divisor in PRIMES:
+    if value % divisor == 0:
+      return divisor
+  # return None
 
 
 def find_jamcoins(length, count):
   """Generates jamcoins with given inputs in the output format needed."""
 
+  # strs = stream_generator(2 ** length + 1, 2 ** (length - 1) + 1, -2)
   strs = stream_generator(2 ** (length - 1) + 1, 2 ** length + 1, 2)
   jamcoins, generated = {}, 0
 
@@ -70,6 +91,7 @@ def main():
   # the dict here and the open file for writing.
   # Don't use argparse, as the boilerplate slows it down.
   cases, length, count = map(int, sys.argv[1:4])
+  cache_primes(length)
   for case in range(cases):
     print "Case #{0}:".format(case + 1)
     jamcoins = find_jamcoins(length, count)
