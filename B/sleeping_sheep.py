@@ -34,7 +34,7 @@ def main():
 
   with open(output_file, 'w') as ofile:
     for case, num in outputs.iteritems():
-      ofile.write('Case #{0}: {1}\n'.format(case, num))
+      ofile.write('Case #{0}: {1}\n'.format(case + 1, num))
 
 
 if __name__ == '__main__':
