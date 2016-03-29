@@ -28,7 +28,11 @@ def interpret_from_base(string, base):
 def get_a_divisor(value):
   """Gets a non-trivial divisor of value, None if no divisors are found."""
   if value not in _CACHE:
-    for divisor in xrange(2, int(math.ceil(math.sqrt(value)))):
+    if value % 2 == 0:
+      _CACHE[value] = 2
+      # break  # Repeating returns to make it faster, remove if unneded.
+      return 2
+    for divisor in xrange(3, int(math.ceil(math.sqrt(value))), 2):
       if value % divisor == 0:
         _CACHE[value] = divisor
         # break  # Repeating returns to make it faster, remove if unneded.
